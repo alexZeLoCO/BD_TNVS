@@ -12,8 +12,7 @@ DROP DATABASE IF EXISTS costurera;
 CREATE DATABASE costurera;
 
 -- conectarse a la base de datos costurera
-\c costurera
- /*
+\c costurera /*
 Nombre de la tabla: PRENDAS
 Campos:
 	1. id_prenda: entero, es la clave primaria
@@ -21,9 +20,8 @@ Campos:
 	3. anios: entero entre 0 y 30
 */
 CREATE TABLE prendas (id_prenda INTEGER PRIMARY KEY,
-	nom_prenda VARCHAR(20) NOT NULL UNIQUE,
-	anios INTEGER CHECK (anios BETWEEN 0 AND 30)
-	);
+																							nom_prenda VARCHAR(20) NOT NULL UNIQUE,
+																							anios INTEGER CHECK (anios BETWEEN 0 AND 30));
 
 /*
 Nombre de la tabla: arreglos
@@ -34,7 +32,8 @@ Campos:
 Restricciones:
 	1. La clave primaria es id_arreglos
  */
-CREATE TABLE arreglos (id_arreglos INTEGER PRIMARY KEY, desc_arreglos VARCHAR(10));
+CREATE TABLE arreglos (id_arreglos INTEGER PRIMARY KEY,
+																								desc_arreglos VARCHAR(10));
 
 -- Otra opción: PRIMARY KEY (id_arreglos)
  /*
@@ -62,9 +61,8 @@ Observaciones:
  */
 CREATE TABLE prendas_arreglos
 				(id_prenda INTEGER CHECK (id_prenda > 0), id_arreglos INTEGER CHECK (id_prenda > 0), estado VARCHAR(12) CHECK (UPPER(estado) IN ('FACIL',
-				'DIFICIL'
-				'REGULAR')), PRIMARY KEY (id_prenda,
-					id_arreglos),
+																																																																																																																																						'DIFICIL' 'REGULAR')), PRIMARY KEY (id_prenda,
+																																																																																																																																																																											id_arreglos),
 					FOREIGN KEY (id_arreglos) REFERENCES arreglos (id_arreglos) ON DELETE CASCADE ON UPDATE CASCADE);
 
 /*																																																																																																																																												 )Nombre de la tabla: PRENDAS_arreglos_TAREAS
@@ -81,11 +79,12 @@ Restricciones:
 */
 CREATE TABLE prendas_arreglos_tareas
 				(id_prenda INTEGER, id_arreglos INTEGER, id_tarea INTEGER, importe DECIMAL (6, 1),
-					PRIMARY KEY (id_prenda,id_arreglos,id_tarea),
-					FOREIGN KEY (id_prenda,id_arreglos) REFERENCES prendas_arreglos (id_prenda, id_arreglos) ON DELETE CASCADE ON UPDATE CASCADE,
-FOREIGN KEY (id_tarea) REFERENCES tareas (id_tarea) ON
-DELETE CASCADE ON
-UPDATE CASCADE);
+						PRIMARY KEY (id_prenda,
+																				id_arreglos,
+																				id_tarea),
+					FOREIGN KEY (id_prenda,
+																			id_arreglos) REFERENCES prendas_arreglos (id_prenda, id_arreglos) ON DELETE CASCADE ON UPDATE CASCADE,
+					FOREIGN KEY (id_tarea) REFERENCES tareas (id_tarea) ON DELETE CASCADE ON UPDATE CASCADE);
 
 ----------------------------- INSERTS ----------------------
 
@@ -296,24 +295,110 @@ VALUES (4,
 --	nom_prenda: nombre de la prenda
 --	desc_arreglos: descripcion del arreglos
 -- para todas las prendas cuyo nombre contenga una 'A' o una 'a'
- --2)
+
+SELECT nom_prenda,
+	desc_arreglos
+FROM prendas_arreglos
+NATURAL JOIN arreglos
+NATURAL JOIN prendas
+WHERE UPPER(nom_prenda) LIKE '%A%';
+
+--2)
 -- Descripciones de los arreglos que aun no han sido realizados en alguna prenda
- --3)
+
+SELECT desc_arreglos
+FROM arreglos
+WHERE arreglos.id_arreglos NOT IN
+								(SELECT id_arreglos
+									FROM prendas_arreglos);
+
+--3)
 -- Mostrar los identificadores de las prendas que aun no han tenido ningun arreglos (estan en buen estado)
- --4)
+
+SELECT id_prenda
+FROM prendas
+WHERE prendas.id_prenda NOT IN
+								(SELECT id_prenda
+									FROM prendas_arreglos);
+
+
+SELECT id_prenda
+FROM prendas
+LEFT JOIN prendas_arreglos USING (id_prenda)
+WHERE id_arreglos IS NULL;
+
+--4)
 -- Mostrar los id_prenda, id_arreglos, id_tarea,
 -- cuyo importe coincida con el mayor de los importes
- --5)
+
+SELECT id_prenda,
+	id_arreglos,
+	id_tarea
+FROM prendas_arreglos_tareas
+WHERE importe =
+								(SELECT max(importe)
+									FROM prendas_arreglos_tareas);
+
+--5)
 -- Mostrar los id_prenda, id_arreglos, id_tarea,
 -- cuyo importe coincida con algun importe de alguna tarea de algun arreglos
 -- de la id_prenda=1
- --6)
+
+SELECT id_prenda,
+	id_arreglos,
+	id_tarea
+FROM prendas_arreglos_tareas
+WHERE importe IN
+								(SELECT importe
+									FROM prendas_arreglos_tareas
+									WHERE id_prenda=1);
+
+--6)
 -- Identificador de los arreglos que para la misma tarea
 -- tienen distinto importe dependiendo de la prenda
- --7)
+
+SELECT a.id_arreglos,
+	b.id_arreglos
+FROM prendas_arreglos_tareas a,
+	prendas_arreglos_tareas b
+WHERE a.id_tarea = b.id_tarea
+				AND a.id_prenda != b.id_prenda
+				AND a.importe != b.importe
+				AND a.id_arreglos != b.id_arreglos;
+
+--7)
 -- Nombres de las prendas que para algun arreglos se le han aplicado todas las tareas
- -- Nombres de las prendas que han tenido el mismo numero de arreglos
- --------------------------- ACTUALIZACIONES --------------------------
+
+SELECT nom_prenda
+FROM prendas AS a
+INNER JOIN
+				(SELECT DISTINCT id_prenda
+					FROM prendas_arreglos_tareas AS a1
+					WHERE NOT EXISTS (
+																											(SELECT id_arreglos
+																												FROM arreglos)
+																							EXCEPT
+																											(SELECT id_arreglos
+																												FROM prendas_arreglos_tareas AS a2
+																												WHERE a1.id_prenda = a2.id_prenda))
+									AND EXISTS
+													(SELECT id_arreglos
+														FROM arreglos) ) AS b ON (a.id_prenda=b.id_prenda);
+
+-- Nombres de las prendas que han tenido el mismo numero de arreglos
+
+SELECT a.nom_prenda,
+	COUNT(b.id_arreglos) AS cuenta_arreglos
+FROM prendas AS a
+NATURAL JOIN prendas_arreglos AS b
+GROUP BY a.id_prenda
+HAVING COUNT(b.id_arreglos) IN
+				( SELECT COUNT (b.id_arreglos)
+					FROM prendas AS c
+					NATURAL JOIN prendas_arreglos AS d
+					WHERE a.id_prenda != c.id_prenda );
+
+--------------------------- ACTUALIZACIONES --------------------------
  -- Actualizar el importe de la id_prenda=1, id_arreglos=1, id_tarea=1 de la tabla prendas_arreglos_tareas
 -- con el importe de  id_prenda=1, id_arreglos=3, id_tarea=3 de dicha tabla
  --------------------------- ANADIR UN CAMPO ----------------------------
