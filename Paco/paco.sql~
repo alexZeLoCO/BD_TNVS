@@ -31,5 +31,5 @@ UNION
 SELECT material.nombre
 FROM material
 JOIN materialOrigen ON material.id=materialOrigen.id_material
-GROUP BY (materialOrigen.id_material)
-HAVING COUNT(materialOrigen.id_material)>=2;
+GROUP BY (material.nombre)
+HAVING COUNT(materialOrigen.id_material)=2;

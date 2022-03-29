@@ -67,8 +67,21 @@ GROUP BY material.id
 HAVING (COUNT(materialOrigin.id_Material)=2);
 
 -- 12 Display the id and name of mobiles that have more than 4 components
+-- FIXME
 SELECT id, name, COUNT(mobileComponent.id_component)
 FROM mobile
 JOIN mobileComponent ON mobile.id=mobileComponent.id_mobile
 GROUP BY id_mobile
 HAVING (COUNT(id_component)>4);
+
+SELECT id, name, COUNT(mobileComponent.id_component)
+FROM mobile
+JOIN mobileComponent ON mobile.id=mobileComponent.id_mobile
+GROUP BY id
+HAVING COUNT (mobileComponent.id_component)>(
+	SELECT DISTINCT COUNT (mobileComponent.id_component)
+	FROM mobile
+	JOIN mobileComponent ON mobile.id=mobileComponent.id_mobile
+	GROUP BY id
+	HAVING COUNT (mobileComponent.id_component)=4
+);

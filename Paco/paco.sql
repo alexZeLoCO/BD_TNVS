@@ -22,14 +22,21 @@ LEFT JOIN materialOrigen ON material.id=materialOrigen.id_material
 WHERE materialOrigen.id_origen IS NULL;
 
 -- 4 Materiales que provengan de 2 sitios diferentes y de Rusia
-SELECT material.nombre
+SELECT material.nombre, material.id
 FROM material
 JOIN materialOrigen ON material.id=materialOrigen.id_material
 JOIN origen ON materialOrigen.id_origen=origen.id
 WHERE UPPER(origen.lugar)='RUSIA'
 UNION
-SELECT material.nombre
+SELECT material.nombre, material.id
 FROM material
 JOIN materialOrigen ON material.id=materialOrigen.id_material
-GROUP BY (material.nombre)
+GROUP BY (material.id)
 HAVING COUNT(materialOrigen.id_material)=2;
+
+-- 5 Nombre de todos aquellos componentes que contengan el material niquel
+SELECT componente.nombre
+FROM componente
+JOIN componenteMaterial ON componente.id=componenteMaterial.id_componente
+JOIN material ON componenteMaterial.id_material=material.id
+WHERE lower(material.nombre)='niquel';

@@ -67,7 +67,7 @@ GROUP BY material.id
 HAVING (COUNT(materialOrigin.id_Material)=2);
 
 -- 12 Display the id and name of mobiles that have more than 4 components
-SELECT mobileComponent.id_mobile, mobile.name, COUNT(mobileComponent.id_component)
+SELECT id, name, COUNT(mobileComponent.id_component)
 FROM mobile
 JOIN mobileComponent ON mobile.id=mobileComponent.id_mobile
 GROUP BY id_mobile
