@@ -1,0 +1,21 @@
+-- 1
+CREATE OR REPLACE function presenta_insercion () returns trigger as $$
+begin
+if tg_op = 'INSERT' then
+	raise notice 'Se ha realizado una insercion';
+	return new;
+end if;
+return null;
+end;
+$$ language plpgsql;
+
+create trigger tg_presenta_insercion
+after insert on estudiante_grado_modulo
+for each row execute procedure presenta_insercion();
+
+-- 2
+create or replace function presenta_cosas ()  returns trigger as $$
+begin
+if tg_op = 'INSERT' then
+	raise notice 'Se ha realizado una insercion';
+	
