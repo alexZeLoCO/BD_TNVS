@@ -17,11 +17,11 @@ prev=" "
 while [ "$out" != "$prev" ] # Until there are no changes
 do
 	prev=$out
-	for i in $2 # For each condition>consecuence
+	for i in $2 # For each condition>consequence
 	do
 		if (./containsAllChars.sh "$out" "$(echo $i | cut -d '>' -f 1)") # Check if condition is met
 		then
-			if !(./containsAllChars.sh "$out" "$(echo $i | cut -d '>' -f 2)") # Check if consecuence is not new
+			if !(./containsAllChars.sh "$out" "$(echo $i | cut -d '>' -f 2)") # Check if consequence is not new
 			then
 				out="$out $(./spaceOut.sh $(echo $i | cut -d '>' -f 2))" # Add consecuence
 			fi
