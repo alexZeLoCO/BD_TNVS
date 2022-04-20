@@ -19,11 +19,11 @@ do
 	prev=$out
 	for i in $2 # For each condition>consecuence
 	do
-		if (echo $out | grep "$(echo $i | cut -d '>' -f 1)" >/dev/null) # Check if condition is met
+		if (./containsAllChars.sh "$out" "$(echo $i | cut -d '>' -f 1)") # Check if condition is met
 		then
-			if !(echo $out | grep "$(echo $i | cut -d '>' -f 2)" >/dev/null) # Check if consecuence is not new
+			if !(./containsAllChars.sh "$out" "$(echo $i | cut -d '>' -f 2)") # Check if consecuence is not new
 			then
-				out=$out" "$(echo $i | cut -d '>' -f 2) # Add consecuence
+				out="$out $(./spaceOut.sh $(echo $i | cut -d '>' -f 2))" # Add consecuence
 			fi
 		fi
 	done
