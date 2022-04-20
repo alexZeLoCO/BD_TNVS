@@ -23,7 +23,7 @@ do
 		then
 			if !(./containsAllChars.sh "$out" "$(echo $i | cut -d '>' -f 2)") # Check if consequence is not new
 			then
-				out="$out $(./spaceOut.sh $(echo $i | cut -d '>' -f 2))" # Add consecuence
+				out="$out $(./spaceOut.sh $(echo $i | cut -d '>' -f 2))" # Add consequence 
 			fi
 		fi
 	done
