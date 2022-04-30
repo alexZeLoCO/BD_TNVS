@@ -62,3 +62,36 @@ END LOOP;
 END;
 
 $$ language plpgsql;
+
+-- 4
+
+CREATE TABLE operation_inventor_log (operation VARCHAR(1),
+                                               stamp TIMESTAMP,
+                                                     inventor_name VARCHAR(50),
+                                                                   occupation VARCHAR(100));
+
+-- 5
+
+CREATE OR REPLACE FUNCTION operation_log () RETURNS TRIGGER AS $$
+
+BEGIN
+
+IF tg_op = 'DELETE'
+THEN
+INSERT INTO operation_inventor_log VALUES (LEFT(tg_op, 1), now(), old.inventor_name, old.occupation);
+RETURN NULL;
+END IF;
+
+INSERT INTO operation_inventor_log VALUES (LEFT(tg_op, 1), now(), new.inventor_name, new.occupation);
+RETURN NULL;
+END;
+$$ language plpgsql;
+
+
+CREATE TRIGGER tg_operation_inventor_log AFTER
+INSERT
+OR
+DELETE
+OR
+UPDATE ON inventor
+FOR EACH ROW EXECUTE function operation_log();
