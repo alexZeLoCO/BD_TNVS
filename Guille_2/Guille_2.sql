@@ -41,3 +41,24 @@ END;
 $$ language plpgsql;
 
 -- 3
+
+CREATE OR REPLACE PROCEDURE misco (year1 INTEGER, year2 INTEGER) AS $$
+DECLARE
+    r RECORD;
+BEGIN
+for r in
+SELECT invention.invention_name,
+       invention.invention_year,
+       inventor.inventor_name
+FROM invention
+INNER JOIN inventioninventor USING (id_invention)
+INNER JOIN inventor USING (id_inventor)
+WHERE invention.invention_year BETWEEN year1 AND year2
+
+LOOP
+    RAISE NOTICE '(%, %, %)', r.invention_name, r.invention_year, r.inventor_name;
+END LOOP;
+
+END;
+
+$$ language plpgsql;
