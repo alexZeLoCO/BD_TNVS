@@ -1,0 +1,390 @@
+-- PL5
+
+-- Nombre:
+-- Apellidos: 
+-- DNI:                                                                                                                                            
+
+
+-- Completar sobre este mismo fichero las cuestiones, 
+-- MODIFICANDO EL NOMBRE DEL FICHERO CON EL NOMBRE Y EL DNI
+
+
+-- Es recomendable el ir realizando una a una consultas en el PostgreSQL y 
+-- a medida que funcionen correctamente 
+-- ir pegandolas en este fichero
+-- que debería ejecutarse correctamente con la orden \i
+
+-- conectarse con template1
+
+	\c template1
+
+-- crear la BD electrodomesticos
+
+	CREATE DATABASE electrodomesticos;
+
+-- conectarse a la bd electrodomesticos
+
+	\c electrodomesticos
+
+-- ///////////////////////////////////////////   DOMINIOS  /////////////////////////////////////
+
+-- Crear el dominio ID: enteros entre 1 y 1000
+
+	CREATE DOMAIN ID AS INTEGER CHECK((VALUE>=1)AND(VALUE<=1000));
+
+--  ///////////////////////////////////       TABLAS    ////////////////////////////////////////
+
+-- Nombre de la tabla: ELECTRODOMESTICO
+-- Campos: 	
+--	1. id_electrodomestico: dominio ID
+	2. nom_electrodomestico: cadena de hasta 20 caracteres
+	3. anios: entero entre 0 y 30
+--Restricciones:
+--	1. La clave primaria es id_electrodomestico
+--      2. Nom_electrodomestico es un campo obligatorio y 
+--         no se puede repetir
+
+
+
+
+
+
+
+
+
+-- Nombre de la tabla: REPARACIONES
+-- Campos: 
+--	1. id_reparacion: dominio ID
+--	2. nom_reparacion: cadena de hasta 30 caracteres maximo
+-- Restricciones:
+--	1. La clave primaria es id_reparacion
+--      2. El nombre de la reparacion no se puede repetir
+
+
+
+
+
+
+-- Nombre de la tabla: PIEZAS
+-- Campos: 
+--	1. id_pieza: dominio ID
+--	2. nom_pieza: cadena de 30 caracteres máximo
+-- Restricciones:
+--	1. La clave primaria es id_pieza
+
+ 
+
+
+
+
+
+
+
+
+-- Nombre de la tabla: ELECTRODOMESTICOS_REPARACIONES
+-- Campos: 
+--	1. id_electrodomestico: dominio ID
+--	2. id_reparacion: dominio ID
+--	3. estado:  cadena de hasta 12 caracteres con sólo 4
+--                  valores posibles: 'DEFECTUOSO', 'BUENO' y 'REGULAR'
+--                  que admita cualquier combinación de mayúsc o minúsc	
+-- Observaciones:
+-- 	1. La clave primaria es id_electrodomestico+ id_reparacion
+--	2. Definir las claves ajenas 
+--        (ESTABLECER LAS CONDICIONES ON DELETE Y ON UPDATE)
+                 
+
+
+
+
+
+
+
+
+
+
+-- Nombre de la tabla: ELECTRODOMESTICOS_REPARACIONES_piezaS
+-- Campos: 
+--	1. id_electrodomestico: dominio ID
+--	2. id_reparacion: dominio ID
+--	3. id_pieza: dominio ID
+--	4. importe: decimal con 6 digitos, 1 de ellos para los decimales
+-- Restricciones:
+--	1. La clave primaria es (id_electrodomestico+id_reparacion+id_pieza)
+--	2. Una clave ajena (id_electrodomestico+ id_reparacion) a la tabla 
+--         ELECTRODOMESTICOS_REPARACIONES  
+--         (ON DELETE y ON UPDATE la acción es CASCADE)
+--      3. Otra clave ajena (id_pieza) a la tabla piezas 
+--         (ON DELETE y ON UPDATE la acción es CASCADE)
+
+
+
+
+
+
+
+-- ////////////////////////////////////    BORRADO TABLAS ////////////////////////////////
+-- Borrado previo de todas las tablas 
+
+
+
+
+
+
+-- ////////////////////////////////////////////    INSERTS     ////////////////////////////////
+
+-- ELECTRODOMESTICOS
+
+INSERT INTO electrodomestico(id_electrodomestico, nom_electrodomestico, anios) VALUES(1,'Frigorifico',2);
+INSERT INTO electrodomestico(id_electrodomestico, nom_electrodomestico, anios) VALUES(2,'LavadorA',5);
+INSERT INTO electrodomestico(id_electrodomestico, nom_electrodomestico, anios) VALUES(3,'Lavajillas',1);
+INSERT INTO electrodomestico(id_electrodomestico, nom_electrodomestico, anios) VALUES(4,'TostadoRa',2);
+INSERT INTO electrodomestico(id_electrodomestico, nom_electrodomestico, anios) VALUES(5,'Freidora',2);
+INSERT INTO electrodomestico(id_electrodomestico, nom_electrodomesticoa, anios) VALUES(6,'LaVadora',2);
+
+-- REPARACIONES
+
+INSERT INTO reparaciones (id_reparacion, nom_reparacion) VALUES(1,'Cambiar');     
+INSERT INTO reparaciones (id_reparacion, nom_reparacion) VALUES(2,'Sustituir');     
+INSERT INTO reparaciones (id_reparacion, nom_reparacion) VALUES(3,'Reaparar');
+INSERT INTO reparaciones (id_reparacion, nom_reparacion) VALUES(4,'Garantía');  
+INSERT INTO reparaciones (id_reparacion, nom_reparacion) VALUES(5,'Tirar');  
+
+-- PIEZAS
+
+INSERT INTO piezas (id_pieza, nom_pieza) VALUES (1,'Resistencia');
+INSERT INTO piezas (id_pieza, nom_pieza) VALUES (2,'Tornillo');
+INSERT INTO piezas (id_pieza, nom_pieza) VALUES (3,'Cable');
+INSERT INTO piezas (id_pieza, nom_pieza) VALUES (4,'Enchufe');
+INSERT INTO piezas (id_pieza, nom_pieza) VALUES (5,'Arandela');
+
+-- electrodomesticoS_reparaciones
+
+INSERT INTO electrodomestico_reparaciones  (id_electrodomestico, id_reparacion) VALUES (1,1);     
+INSERT INTO electrodomestico_reparaciones  (id_electrodomestico, id_reparacion) VALUES (1,2);     
+INSERT INTO electrodomestico_reparaciones  (id_electrodomestico, id_reparacion) VALUES (1,3);     
+INSERT INTO electrodomestico_reparaciones  (id_electrodomestico, id_reparacion) VALUES (5,1);
+INSERT INTO electrodomestico_reparaciones  (id_electrodomestico, id_reparacion) VALUES (4,1);     
+INSERT INTO electrodomestico_reparaciones  (id_electrodomestico, id_reparacion) VALUES (4,3);     
+
+-- electrodomesticoS_reparaciones_piezaS
+
+INSERT INTO electrodomesticos_reparaciones_piezas (id_electrodomestico, id_reparacion, id_pieza, importe) VALUES (1,1,1,3.00);     
+INSERT INTO electrodomesticos_reparaciones_piezas (id_electrodomestico, id_reparacion, id_pieza, importe) VALUES (1,1,2,5.00);     
+INSERT INTO electrodomesticos_reparaciones_piezas (id_electrodomestico, id_reparacion, id_pieza, importe) VALUES (1,1,3,6.00);
+INSERT INTO electrodomesticos_reparaciones_piezas (id_electrodomestico, id_reparacion, id_pieza, importe) VALUES (1,1,4,6.00);
+INSERT INTO electrodomesticos_reparaciones_piezas (id_electrodomestico, id_reparacion, id_pieza, importe) VALUES (1,1,5,6.00);
+INSERT INTO electrodomesticos_reparaciones_piezas (id_electrodomestico, id_reparacion, id_pieza, importe) VALUES (1,3,3,6.00);  
+
+INSERT INTO electrodomesticos_reparaciones_piezas (id_electrodomestico, id_reparacion, id_pieza, importe) VALUES (1,2,2,8.00);   
+
+INSERT INTO electrodomesticos_reparaciones_piezas (id_electrodomestico, id_reparacion, id_pieza, importe)  VALUES (2,1,1,60.00);
+INSERT INTO electrodomesticos_reparaciones_piezas (id_electrodomestico, id_reparacion, id_pieza, importe)  VALUES (2,2,3,6.00);
+
+INSERT INTO electrodomesticos_reparaciones_piezas (id_electrodomestico, id_reparacion, id_pieza, importe) VALUES (3,1,1,80.00);
+INSERT INTO electrodomesticos_reparaciones_piezas (id_electrodomestico, id_reparacion, id_pieza, importe) VALUES (3,2,3,6.00);
+
+INSERT INTO electrodomesticos_reparaciones_piezas (id_electrodomestico, id_reparacion, id_pieza, importe) VALUES (4,1,1,3.00);
+INSERT INTO electrodomesticos_reparaciones_piezas (id_electrodomestico, id_reparacion, id_pieza, importe) VALUES (4,3,2,5.0);
+  
+INSERT INTO electrodomesticos_reparaciones_piezas (id_electrodomestico, id_reparacion, id_pieza, importe) VALUES (5,1,1,5.00);     
+INSERT INTO electrodomesticos_reparaciones_piezas (id_electrodomestico, id_reparacion, id_pieza, importe) VALUES (5,1,2,7.00);     
+
+
+
+
+-- ////////////////////////////////////   MODIFICACIONES DE TABLAS ///////////////////////////////////
+
+
+-- Añadir el campo ATRIBUTO1 de tipo entero a la tabla reparaciones
+-- este campo sólo puede tomar valores entre 1 y 5
+
+
+
+
+-- Hacer que ATRIBUTO1 haga integridad referencial 
+-- a id_reparacion de la tabla reparaciones
+
+
+
+
+
+
+-- Imponer la restricción con nombre ATRIBUTO1_UNICO 
+-- para que ATRIBUTO1 no se repita en la tabla reparaciones
+
+
+
+
+
+-- Borrar la restricción ATRIBUTO1_UNICO
+
+
+
+
+
+
+
+-- ///////////////////////// CONSULTAS /////////////////////////////
+
+-- CONSULTA 1
+-- Mostrar las columnas
+--	nom_electrodomestico: nombre de la electrodomestico
+--	nom_reparacion: nombre de la reparacion
+-- para todos las electrodomesticos cuyo nombre contenga una 'A' o una 'a'
+
+
+-- CONSULTA 2
+-- Mostrar todoslas electrodomesticos junto con el número de reparaciones distintas que han tenido (aunque sea 0)
+-- además mostrar un campo calculado llamado ESTADO:
+--  si el numero de reparaciones de la electrodomestico es >2, se mostrará el valor 'mal estado' y sino el valor 'buen estado'
+--         (utilizar CASE WHEN)
+
+
+-- CONSULTA 3
+-- Mostrar las reparaciones(id_reparacion,nom_reparacion) que no han sido realizadas en ningun electrodomestico
+
+
+
+
+-- CONSULTA 4
+-- Mostrar los id_electrodomestico que aún no han tenido ninguna reparacion.
+
+
+
+-- CONSULTA 5
+-- Mostrar los id_electrodomestico, id_reparacion, id_pieza,
+-- cuyo importe coincida con el mayor de los importes.
+
+
+
+-- CONSULTA 6
+-- Mostrar los id_electrodomestico, id_reparacion, id_pieza,
+-- cuyo importe coincida con algún importe de alguna pieza de alguna reparacion de 
+-- del electrodomestico con id_electrodomestico=1.
+
+
+
+
+-- CONSULTA 7
+-- Identificador de los reparaciones que para la misma pieza
+-- tienen distinto importe dependiendo de la electrodomestico 
+-- (osea reparacion+pieza que tienen distintos importes distintos para distintos electrodomesticos)
+
+
+
+
+-- CONSULTA 8
+-- electrodomesticos (id_electrodomestico, nom_electrodomestico) que para algún arreglo se han utilizado todas las piezas
+
+
+-- CONSULTA 9
+-- Parejas de electrodomesticos (id_electrodomestico1, nom_electrodomestico1, id_electrodomestico2, nom_electrodomestico2) 
+-- que han tenido el mismo número de reparaciones
+
+
+-- CONSULTA 10 
+-- electrodomesticos (id_electrodomestico, nom_electrodomestico) que hayan tenido un gasto total en sus reparaciones 
+-- mayor o igual que el promedio de gasto en reparaciones por electrodomestico.
+
+
+-- CONSULTA 11
+-- Mostrar las electrodomesticos (id_electrodomestico, nom_electrodomestico) y 
+-- sus reparaciones (id_reparacion, nom_reparacion) 
+-- que tengan un importe total>10. 
+
+
+-- CONSULTA 12
+-- Mostrar las piezas (id_pieza, nom_pieza) que se han realizado en todas los reparaciones 
+-- realizadas en los electrodomesticos.
+
+
+
+-- //////////////////////////// ACTUALIZACIONES //////////////////////////////////////
+
+-- ACTUALIZACION 1
+-- Actualizar el importe de la id_electrodomestico=1, id_reparacion=1, id_pieza=1 de la tabla electrodomesticos_reparaciones_piezas
+-- con el importe de  id_electrodomestico=1, id_reparacion=3, id_pieza=3 de dicha tabla
+   
+
+
+
+-- ACTUALIZACION 2
+-- Actualizar el importe de las piezas de los reparaciones de las electrodomesticos 
+-- 'Faldas' con el importe 
+-- promedio por pieza de las electrodomesticos 'Frigorifico'.
+
+
+
+
+
+
+
+----------------------------------------- TRIGGERS -----------------------------------
+
+-- En primer lugar añadir un campo IMPORTE_TOTAL en la tabla electrodomesticos_reparaciones
+-- con valor por defecto 0 y que
+-- solo puede tomar valores >=0 y <= 1000
+
+
+
+
+
+-- Actualizar estaticamente a través de un UPDATE TABLE todos los valores 
+-- del IMPORTE_TOTAL en la tabla electrodomesticos_reparaciones
+
+
+
+
+-- Actualizar dinamicamente el campo IMPORTE_TOTAL cada vez que se añada
+-- una tupla a la tabla electrodomesticos_reparaciones_piezas a través de un trigger
+
+
+-- primero: crear el lenguaje plpgsql
+CREATE LANGUAGE plpgsql;
+
+
+-- Borra el trigger (si ya no existe da un mensaje de aviso en lugar de
+-- error con la expresión opcional IF EXISTS). 
+-- Con la palabra opcional CASCADE se borran 
+-- también todos los objetos que dependen del trigger 
+
+DROP TRIGGER IF EXISTS actualiza_importe_total_insert_electrodomesticos_reparaciones_piezas ON electrodomesticos_reparaciones_piezas CASCADE;
+
+-- crear la funcion 'actualiza_importe_total_insert_electrodomesticos_reparaciones_piezas' 
+-- del trigger que actualiza el nuevo campo IMPORTE_TOTAL 
+-- en la tabla electrodomesticos_reparaciones
+-- cada vez que se inserta una tupla en la tabla electrodomesticos_reparaciones_piezas
+
+
+
+
+-- crear el trigger 'actualiza_importe_total_insert_electrodomesticos_reparaciones_piezas'
+
+
+
+
+
+-- Mostrar el importe total de id_electrodomestico=4, id_reparacion= 1
+
+
+
+
+-- Añadir una nueva tupla a la tabla electrodomesticos_reparaciones_piezas:    
+-- id_electrodomestico=4, id_reparacion= 1, id_pieza= 2, importe=4
+
+
+
+
+
+-- Mostrar de nuevo el importe total de id_electrodomestico=4, id_reparacion= 1, 
+-- comprobar que el campo importe_total ha aumentado en 4 su valor.
+
+
+
+
+
+
+-- /////////////////////////////////////// BORRAR LA BASE DE DATOS ////////////////////////////////////
+
+
