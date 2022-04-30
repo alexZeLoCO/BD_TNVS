@@ -32,6 +32,12 @@ INNER JOIN inventorformation USING (id_inventor)
 INNER JOIN formation USING (id_formation)
 WHERE UPPER(formation.centre_name) = UPPER(centre);
 
+IF NOT FOUND
+    THEN RAISE EXCEPTION 'There is no inventor from %.', $1;
+END IF;
+
 END;
 
 $$ language plpgsql;
+
+-- 3
