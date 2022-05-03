@@ -113,22 +113,6 @@ HAVING count(id_invention) =
 
 SELECT *
 FROM inventor
-WHERE NOT EXISTS
-        (SELECT *
-         FROM inventor
-         EXCEPT SELECT *
-         FROM inventor
-         WHERE id_inventor IN
-                 (SELECT id_inventor
-                  FROM inventor
-                  EXCEPT SELECT id_inventor
-                  FROM inventioninventor
-                  JOIN invention USING (id_invention)
-                  WHERE invention_year < 1945 ));
-
-
-SELECT *
-FROM inventor
 WHERE id_inventor NOT IN
         (SELECT id_inventor
          FROM inventor
@@ -142,3 +126,27 @@ WHERE id_inventor NOT IN
                   JOIN invention USING (id_invention)
                   WHERE invention_year < 1945 ));
 
+
+SELECT id_inventor,
+       inventor_name,
+       birth_place,
+       birth_year,
+       occupation
+FROM (inventor
+      JOIN inventioninventor USING (id_inventor)
+      JOIN invention USING (id_invention)) AS A
+WHERE NOT EXISTS -- Si la consulta siguiente es null se incluye la entrada
+
+        (SELECT id_invention
+         FROM (invention
+               JOIN inventioninventor USING (id_invention)
+               JOIN inventor USING (id_inventor)) AS B
+         WHERE A.id_inventor = B.id_inventor -- los inventos del actual (A)
+
+         EXCEPT SELECT id_invention
+         FROM (invention
+               JOIN inventioninventor USING (id_invention)
+               JOIN inventor USING (id_inventor)) AS C
+         WHERE invention_year> 1945 -- filtrar los inventos del actual (A) que son despues del '45
+
+             AND A.id_inventor = C.id_inventor );
