@@ -79,11 +79,11 @@ BEGIN
 IF tg_op = 'DELETE'
 THEN
 INSERT INTO operation_inventor_log VALUES (LEFT(tg_op, 1), now(), old.inventor_name, old.occupation);
-RETURN NULL;
+RETURN new;
 END IF;
 
 INSERT INTO operation_inventor_log VALUES (LEFT(tg_op, 1), now(), new.inventor_name, new.occupation);
-RETURN NULL;
+RETURN new;
 END;
 $$ language plpgsql;
 
