@@ -95,3 +95,50 @@ DELETE
 OR
 UPDATE ON inventor
 FOR EACH ROW EXECUTE function operation_log();
+
+-- 7
+
+SELECT id_inventor,
+       count(id_invention)
+FROM invention
+JOIN inventioninventor A USING (id_invention)
+WHERE invention_year >= 1945
+GROUP BY (id_inventor)
+HAVING count(id_invention) =
+    (SELECT count(id_invention)
+     FROM invention
+     JOIN inventioninventor USING (id_invention)
+     WHERE id_inventor = A.id_inventor );
+
+
+SELECT *
+FROM inventor
+WHERE NOT EXISTS
+        (SELECT *
+         FROM inventor
+         EXCEPT SELECT *
+         FROM inventor
+         WHERE id_inventor IN
+                 (SELECT id_inventor
+                  FROM inventor
+                  EXCEPT SELECT id_inventor
+                  FROM inventioninventor
+                  JOIN invention USING (id_invention)
+                  WHERE invention_year < 1945 ));
+
+
+SELECT *
+FROM inventor
+WHERE id_inventor NOT IN
+        (SELECT id_inventor
+         FROM inventor
+         EXCEPT SELECT id_inventor
+         FROM inventor
+         WHERE id_inventor IN
+                 (SELECT id_inventor
+                  FROM inventor
+                  EXCEPT SELECT id_inventor
+                  FROM inventioninventor
+                  JOIN invention USING (id_invention)
+                  WHERE invention_year < 1945 ));
+
